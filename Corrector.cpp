@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include <string.h>
 #include "corrector.h"
+#define DEPURAR 1
 //Funciones publicas del proyecto
 /*****************************************************************************************************************
 	DICCIONARIO: Esta funcion crea el diccionario completo
@@ -23,7 +24,48 @@
 ******************************************************************************************************************/
 void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int &iNumElementos)
 {
+	FILE* fpDicc;
+	char linea[4000];
+	int i;
+	iNumElementos = 0;
+	// abrir el achivo
+	if (DEPURAR == 1)
+		printf("%s", szNombre);
 
+	fopen_s(&fpDicc, szNombre, "r");
+	if (fpDicc != NULL)
+	{
+
+		if (DEPURAR == 1)
+			printf("\nSi lo pude abrir");
+
+		while (!feof(fpDicc))
+		{
+			fgets(linea, sizeof(linea), fpDicc);
+			if (DEPURAR == 1)
+				printf("\n%s\n", linea);
+			for (i = 0; i < strlen(linea); i++)
+			{
+				if (linea[i] != ',')
+					if (DEPURAR == 1)
+						printf("%c", linea[i]);
+				if (linea[i] == ' ')
+					iNumElementos++;
+			}
+			if (DEPURAR == 1)
+				printf("\nNumPalabras: %i\n", iNumElementos);
+
+
+
+		}
+
+		fclose(fpDicc);
+	}
+	else
+	{
+		if (DEPURAR == 1)
+			printf("\nNo lo pude abrir");
+	}
 	//Sustituya estas lineas por su código
 	iNumElementos=1;
 	strcpy(szPalabras[0],"AquiVaElDiccionario");

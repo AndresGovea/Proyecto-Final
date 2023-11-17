@@ -25,37 +25,67 @@
 void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int &iNumElementos)
 {
 	FILE* fpDicc;
-	char linea[4000];
-	int i;
+	char linea[7200];
+	char pDetectada[TAMTOKEN];
+	int i, iPalabra=0;
 	iNumElementos = 0;
 	// abrir el achivo
 	if (DEPURAR == 1)
+	{
 		printf("%s", szNombre);
-
+	}
 	fopen_s(&fpDicc, szNombre, "r");
 	if (fpDicc != NULL)
 	{
 
 		if (DEPURAR == 1)
+		{
 			printf("\nSi lo pude abrir");
-
+		}
+		
 		while (!feof(fpDicc))
 		{
 			fgets(linea, sizeof(linea), fpDicc);
 			if (DEPURAR == 1)
+			{
 				printf("\n%s\n", linea);
+			}
 			for (i = 0; i < strlen(linea); i++)
 			{
-				if (linea[i] != ',')
-					if (DEPURAR == 1)
-						printf("%c", linea[i]);
+
 				if (linea[i] == ' ')
+				{
+					pDetectada[iPalabra] = '\0';
+					_strlwr(pDetectada);
+					strcpy_s(szPalabras[iNumElementos], TAMTOKEN, pDetectada);
+					if (strcmp(pDetectada, szPalabras[iNumElementos]) == 0) {
+						iEstadisticas[iNumElementos]++;
+					}
+					_strlwr(szPalabras[iNumElementos]);
+					if (strcmp(pDetectada, szPalabras[iNumElementos]) == 0) {
+						iEstadisticas[iNumElementos]++;
+					}
+					iEstadisticas[iNumElementos] = 1;
+
+					if (DEPURAR == 1)
+					{
+						printf("\np: %s", pDetectada);
+					}
+					iPalabra = 0;
 					iNumElementos++;
+				}
+				else 
+				{
+					if (linea[i] != '(' && linea[i] != ')' && linea[i] != ',' && linea[i] != '.' && linea[i] != ';' && linea[i] != '-' && linea[i] != '--' && linea[i] != '_' && linea[i] != '¿' && linea[i] != '?' && linea[i] != '!' && linea[i] != '¡' && linea[i] != '"' && linea[i] != ':' && linea[i] != '{' && linea[i] != '}' && linea[i] != '¨' && linea[i] != '<' && linea[i] != '>' && linea[i] != '[' && linea[i] != ']' && linea[i] != '~')
+					{
+						pDetectada[iPalabra] = linea[i];
+
+						iPalabra++;
+					}
+				}
 			}
 			if (DEPURAR == 1)
 				printf("\nNumPalabras: %i\n", iNumElementos);
-
-
 
 		}
 
@@ -64,12 +94,11 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 	else
 	{
 		if (DEPURAR == 1)
+		{
 			printf("\nNo lo pude abrir");
+		}
 	}
-	//Sustituya estas lineas por su código
-	iNumElementos=1;
-	strcpy(szPalabras[0],"AquiVaElDiccionario");
-	iEstadisticas[0] = 1; // la primer palabra aparece solo una vez.
+
 }
 
 /*****************************************************************************************************************

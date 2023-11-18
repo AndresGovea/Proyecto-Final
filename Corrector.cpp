@@ -3,7 +3,7 @@
 	FACULTAD DE ESTUDIOS SUPERIORES -ARAGON-
 
 	Computadoras y programacion. 
-	(c) Ponga su nombre y numero de cuenta aqui.
+	(c) Andres Govea Ramirez.
 	
 	Quiso decir: Programa principal de la aplicacion de la distancia de Levenstein.
 	
@@ -27,7 +27,7 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 	FILE* fpDicc;
 	char linea[7200];
 	char pDetectada[TAMTOKEN];
-	int i, iPalabra=0;
+	int i, iPalabra=0, espacio;
 	iNumElementos = 0;
 	// abrir el achivo
 	if (DEPURAR == 1)
@@ -53,36 +53,30 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 			for (i = 0; i < strlen(linea); i++)
 			{
 
-				if (linea[i] == ' ')
-				{
-					pDetectada[iPalabra] = '\0';
-					_strlwr(pDetectada);
-					strcpy_s(szPalabras[iNumElementos], TAMTOKEN, pDetectada);
-					if (strcmp(pDetectada, szPalabras[iNumElementos]) == 0) {
-						iEstadisticas[iNumElementos]++;
-					}
-					_strlwr(szPalabras[iNumElementos]);
-					if (strcmp(pDetectada, szPalabras[iNumElementos]) == 0) {
-						iEstadisticas[iNumElementos]++;
-					}
-					iEstadisticas[iNumElementos] = 1;
+				if (linea[i] == ' ' || linea[i] == '\t' || linea[i] == '\n') {
+					if (!espacio && iPalabra > 0) {
+						pDetectada[iPalabra] = '\0';
+					
+						strcpy(szPalabras[iNumElementos], pDetectada);
 
-					if (DEPURAR == 1)
-					{
-						printf("\np: %s", pDetectada);
+						_strlwr(szPalabras[iNumElementos]);
+						iEstadisticas[iNumElementos] = 1;
+						if (DEPURAR == 1) {
+							printf("\np: %s", pDetectada);
+						}
+						iPalabra = 0;
+						iNumElementos++;
 					}
-					iPalabra = 0;
-					iNumElementos++;
+					espacio = 1;
 				}
-				else 
-				{
-					if (linea[i] != '(' && linea[i] != ')' && linea[i] != ',' && linea[i] != '.' && linea[i] != ';' && linea[i] != '-' && linea[i] != '--' && linea[i] != '_' && linea[i] != '¿' && linea[i] != '?' && linea[i] != '!' && linea[i] != '¡' && linea[i] != '"' && linea[i] != ':' && linea[i] != '{' && linea[i] != '}' && linea[i] != '¨' && linea[i] != '<' && linea[i] != '>' && linea[i] != '[' && linea[i] != ']' && linea[i] != '~')
-					{
+				else {
+					if (linea[i] != '(' && linea[i] != ')' && linea[i] != ',' && linea[i] != '.' && linea[i] != ';' && linea[i] != '-' && linea[i] != '_' && linea[i] != '¿' && linea[i] != '?' && linea[i] != '!' && linea[i] != '¡' && linea[i] != '"' && linea[i] != ':' && linea[i] != '{' && linea[i] != '}' && linea[i] != '<' && linea[i] != '>' && linea[i] != '[' && linea[i] != ']' && linea[i] != '~') {
 						pDetectada[iPalabra] = linea[i];
-
 						iPalabra++;
 					}
+					espacio = 0;
 				}
+			
 			}
 			if (DEPURAR == 1)
 				printf("\nNumPalabras: %i\n", iNumElementos);

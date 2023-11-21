@@ -30,26 +30,15 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	int i, iPalabra = 0, espacio, j;
 	iNumElementos = 0;
 	// abrir el achivo
-	if (DEPURAR == 1)
-	{
-		printf("%s", szNombre);
-	}
+	
 	fopen_s(&fpDicc, szNombre, "r");
 	if (fpDicc != NULL)
 	{
 
-		if (DEPURAR == 1)
-		{
-			printf("\nSi lo pude abrir");
-		}
-
 		while (!feof(fpDicc))
 		{
 			fgets(linea, sizeof(linea), fpDicc);
-			if (DEPURAR == 1)
-			{
-				printf("\n%s\n", linea);
-			}
+			
 			for (i = 0; i <= strlen(linea); i++)
 			{
 
@@ -77,11 +66,6 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 							iNumElementos++;  
 						}
 
-
-						if (DEPURAR == 1)
-						{
-							printf("\np: %s", pDetectada);
-						}
 						iPalabra = 0;
 					}
 					espacio = 1;
@@ -97,8 +81,6 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 				}
 
 			}
-			if (DEPURAR == 1)
-				printf("\nNumPalabras: %i\n", iNumElementos);
 
 		}
 
@@ -108,13 +90,12 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 			{
 				if (strcmp(szPalabras[n], szPalabras[n + 1]) > 0)
 				{
-					// Intercambiar szPalabras[n] y szPalabras[n + 1]
+					
 					char temp[TAMTOKEN];
 					strcpy_s(temp, TAMTOKEN, szPalabras[n]);
 					strcpy_s(szPalabras[n], TAMTOKEN, szPalabras[n + 1]);
 					strcpy_s(szPalabras[n + 1], TAMTOKEN, temp);
 
-					// Intercambiar también los elementos correspondientes en iEstadisticas
 					int tempEstadisticas = iEstadisticas[n];
 					iEstadisticas[n] = iEstadisticas[n + 1];
 					iEstadisticas[n + 1] = tempEstadisticas;
@@ -124,14 +105,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 
 		fclose(fpDicc);
 	}
-	else
-	{
-		if (DEPURAR == 1)
-		{
-			printf("\nNo lo pude abrir");
-		}
-	}
-
+	
 }
 
 	/*****************************************************************************************************************
@@ -175,6 +149,23 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		char	szPalabrasSugeridas[][TAMTOKEN], 	//Lista de palabras clonadas
 		int& iNumSugeridas)						//Numero de elementos en la lista
 	{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		//Sustituya estas lineas por su código
 		strcpy(szPalabrasSugeridas[0], szPalabraLeida); //lo que sea que se capture, es sugerencia
 		iNumSugeridas = 1;							//Una sola palabra sugerida

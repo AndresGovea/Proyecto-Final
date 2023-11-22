@@ -181,7 +181,19 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 			strcpy_s(szPalabraLeida, TAMTOKEN, ayuda); 
 
 		}
-
+		for (int i = 0; i < longitud; i += 2)
+		{
+			if (i + 1 < longitud)
+			{
+				char noPMT = otraAyuda[i];
+				otraAyuda[i] = otraAyuda[i + 1];
+				otraAyuda[i + 1] = noPMT;
+			}
+			if (DEPURAR == 1)
+			{
+				printf("\n%s", otraAyuda);
+			}
+		}
 		
 
 			

@@ -25,7 +25,7 @@
 void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int& iNumElementos)
 {
 	FILE* fpDicc;
-	char linea[7200];
+	char linea[800000];
 	char pDetectada[TAMTOKEN], referencia[NUMPALABRAS][TAMTOKEN],aux[NUMPALABRAS][TAMTOKEN];
 	int i, iPalabra = 0, espacio, j;
 	iNumElementos = 0;
@@ -150,7 +150,45 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		int& iNumSugeridas)						//Numero de elementos en la lista
 	{
 
+		char abecedario[32] = { 'a', 'b', 'c', 'd','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','w','x','y','z', 'á', 'é', 'í', 'ó', 'ú' };
+		int longitud, k=0, n=0;
+		char ayuda[TAMTOKEN], otraAyuda[TAMTOKEN], noPMT[TAMTOKEN];
+		int contador=0;
+		
 
+		longitud = strlen(szPalabraLeida);
+		int iPLeida = 0;
+
+		strcpy_s(ayuda, TAMTOKEN, szPalabraLeida);
+		strcpy_s(otraAyuda, TAMTOKEN, szPalabraLeida);
+
+		for (contador = 0; contador < longitud; contador++)
+		{
+			int j = 0;
+			for (n = 0; n < longitud; n++)
+			{
+				if (n != contador)
+				{
+					szPalabraLeida[j] = ayuda[n];
+					j++;
+				}
+			}
+			szPalabraLeida[longitud - 1] = '\0'; 
+			if (DEPURAR == 1)
+			{
+				printf("\n%s", szPalabraLeida);
+			}
+			strcpy_s(szPalabraLeida, TAMTOKEN, ayuda); 
+
+		}
+
+		
+
+			
+		
+	
+
+	
 
 
 

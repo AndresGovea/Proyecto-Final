@@ -14,6 +14,7 @@
 #include <string.h>
 #include "corrector.h"
 #define DEPURAR 1
+#define ABECEDARIO 32
 //Funciones publicas del proyecto
 /*****************************************************************************************************************
 	DICCIONARIO: Esta funcion crea el diccionario completo
@@ -150,7 +151,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		int& iNumSugeridas)						//Numero de elementos en la lista
 	{
 
-		char abecedario[32] = { 'a', 'b', 'c', 'd','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','w','x','y','z', 'á', 'é', 'í', 'ó', 'ú' };
+		char abecedario[32] = {'a', 'b', 'c', 'd','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','w','x','y','z', 'á', 'é', 'í', 'ó', 'ú'};
 		int longitud, k=0, n=0;
 		char ayuda[TAMTOKEN], otraAyuda[TAMTOKEN], noPMT[TAMTOKEN];
 		int contador=0;
@@ -174,7 +175,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 				}
 			}
 			szPalabraLeida[longitud - 1] = '\0'; 
-			if (DEPURAR == 1)
+			if (DEPURAR == 2)
 			{
 				printf("\n%s", szPalabraLeida);
 			}
@@ -189,11 +190,45 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 				otraAyuda[i] = otraAyuda[i + 1];
 				otraAyuda[i + 1] = noPMT;
 			}
-			if (DEPURAR == 1)
+			if (DEPURAR == 2)
 			{
 				printf("\n%s", otraAyuda);
 			}
 		}
+		for (int contador = 0; contador < longitud; contador++)
+		{
+			for (int i = 0; i < ABECEDARIO; i++)
+			{
+				szPalabraLeida[contador] = abecedario[i];
+				if (DEPURAR == 2)
+				{
+					printf("\n%s", szPalabraLeida);
+				}
+			}
+
+
+			strcpy(szPalabraLeida, ayuda); 
+		}
+		for (int contador = 0; contador <= longitud; contador++)
+		{
+			for (int i = 0; i < ABECEDARIO; i++)
+			{
+				// Inserta la letra del abecedario en la posición contador
+				for (int j = longitud; j >= contador; j--) {
+					szPalabraLeida[j + 1] = szPalabraLeida[j];
+				}
+				szPalabraLeida[contador] = abecedario[i];
+				if (DEPURAR == 1)
+				{
+					printf("\n%s", szPalabraLeida);
+				}
+				
+				strcpy(szPalabraLeida, ayuda);
+			}
+		}
+
+
+
 		
 
 			

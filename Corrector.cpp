@@ -13,8 +13,43 @@
 #include "stdafx.h"
 #include <string.h>
 #include "corrector.h"
-#define DEPURAR 3
+#define DEPURAR 7
 #define ABECEDARIO 32
+
+void ordenamiento(char palabra[][TAMTOKEN], int iEstadisticas[], int elementos) 
+{
+	int anterior, inicio;
+	char aux[TAMTOKEN];
+	int ayudaEx;
+	bool permuta;
+
+	for (anterior = 0; anterior < elementos - 1; anterior++)
+	{
+		permuta = false;
+
+		for (inicio = 0; inicio < elementos - anterior - 1; inicio++)
+		{
+			if (strcmp(palabra[inicio], palabra[inicio + 1]) > 0) 
+			{
+
+				strcpy_s(aux, palabra[inicio]);
+				strcpy_s(palabra[inicio], TAMTOKEN,palabra[inicio + 1]);
+				strcpy_s(palabra[inicio + 1],TAMTOKEN, aux);
+
+				ayudaEx = iEstadisticas[inicio];
+				iEstadisticas[inicio] = iEstadisticas[inicio + 1];
+				iEstadisticas[inicio + 1] = ayudaEx;
+				permuta = true;
+			}
+		}
+
+		if (!permuta) 
+		{
+			break;
+		}
+	}
+}
+
 //Funciones publicas del proyecto
 /*****************************************************************************************************************
 	DICCIONARIO: Esta funcion crea el diccionario completo
@@ -26,116 +61,59 @@
 void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int& iNumElementos)
 {
 	FILE* fpDicc;
-	char linea[850000];
-	char pDetectada[TAMTOKEN], referencia[NUMPALABRAS][TAMTOKEN];
-	int i, iPalabra = 0, espacio, n, k, j;
+	char linea[NUMPALABRAS];
+	char pDetectada[TAMTOKEN];
+	int i, iPalabra = 0, j, archivo, tempEstadisticas;
+	char temp[TAMTOKEN];
 	iNumElementos = 0;
-	// abrir el achivo
-
+	
 	fopen_s(&fpDicc, szNombre, "r");
 	if (fpDicc != NULL)
 	{
-
 		while (!feof(fpDicc))
 		{
 			fgets(linea, sizeof(linea), fpDicc);
-
-			for (i = 0; i < strlen(linea); i++)
+			archivo = strlen(linea);
+			for (i = 0; i < archivo; i++)
 			{
-
-				if (linea[i] == ' ' || linea[i] == '\t' || linea[i] == '\n' || linea[i] == '\r' || linea[i] == '\0')
+				//Eliminamos caracteres no desados 
+				if (linea[i] != '(' && linea[i] != ')' && linea[i] != ',' && linea[i] != '.'
+					&& linea[i] != ';' && linea[i] != '¡' && linea[i] != '*' && linea[i] != '{'
+					&& linea[i] != '}' && linea[i] != '<' && linea[i] != '>' && linea[i] != ' '
+					&& linea[i] != '\n')
 				{
-					if (!espacio && iPalabra > 0) {
-						pDetectada[iPalabra] = '\0';
-						_strlwr_s(pDetectada, TAMTOKEN);
-						strcpy_s(referencia[iNumElementos], TAMTOKEN, pDetectada);
-
-						for (j = 0; j < iNumElementos; j++)
-						{
-							if (strcmp(referencia[j], pDetectada) == 0)
-							{
-								iEstadisticas[j]++;
-								break;
-							}
-						}
-
-						if (j == iNumElementos)
-						{
-
-							strcpy_s(szPalabras[iNumElementos], TAMTOKEN, pDetectada);
-							iEstadisticas[iNumElementos] = 1;
-							iNumElementos++;
-						}
-						iPalabra = 0;
-					}
-					espacio = 1;
-				}
-				else
-				{
-					if (linea[i] != '(' && linea[i] != ')' && linea[i] != ',' && linea[i] != '.' && linea[i] != ';' && linea[i] != '_' && linea[i] != '¿' && linea[i] != '?' && linea[i] != '¡' && linea[i] != ':' && linea[i] != '{' && linea[i] != '}' && linea[i] != '<' && linea[i] != '>' && linea[i] != '[' && linea[i] != ']' && linea[i] != '~' && linea[i] != '´' && linea[i] != '|' && linea[i] != '´')
-					{
-						pDetectada[iPalabra] = linea[i];
-						iPalabra++;
-					}
-					espacio = 0;
+					pDetectada[iPalabra] = linea[i];
+					iPalabra++;
 				}
 
-			}
-			if (iPalabra > 0) {
-				pDetectada[iPalabra] = '\0';
-				_strlwr_s(pDetectada, TAMTOKEN);
-				strcpy_s(referencia[iNumElementos], TAMTOKEN, pDetectada);
-				if (DEPURAR == 7)
+				else if (iPalabra > 0)
 				{
-					printf("Palabra detectada: %s\n", pDetectada);
-				}
-				for (j = 0; j < iNumElementos; j++)
-				{
-					if (strcmp(referencia[j], pDetectada) == 0)
-					{
-						iEstadisticas[j]++;
-						break;
-					}
-				}
-
-				if (j == iNumElementos)
-				{
-
+					pDetectada[iPalabra] = '\0';
+					_strlwr_s(pDetectada, TAMTOKEN);
 					strcpy_s(szPalabras[iNumElementos], TAMTOKEN, pDetectada);
-					iEstadisticas[iNumElementos] = 1;
-					iNumElementos++;
-				}
-				if (DEPURAR == 7)
-				{
-					printf("Recuento de '%s': %d\n", pDetectada, iEstadisticas[j]);
-				}
-				iPalabra = 0;
-			}
 
-		}
+					for (j = 0; j < iNumElementos; j++)
+					{
+						if (strcmp(szPalabras[j], pDetectada) == 0)
+						{
+							iEstadisticas[j]++;
+							break;
+						}
+					}
+					if (j == iNumElementos)
+					{
 
-		for (k = 0; k < iNumElementos - 1; k++)
-		{
-			for (n = 0; n < iNumElementos - k - 1; n++)
-			{
-				if (strcmp(szPalabras[n], szPalabras[n + 1]) > 0)
-				{
-
-					char temp[TAMTOKEN];
-					strcpy_s(temp, TAMTOKEN, szPalabras[n]);
-					strcpy_s(szPalabras[n], TAMTOKEN, szPalabras[n + 1]);
-					strcpy_s(szPalabras[n + 1], TAMTOKEN, temp);
-
-					int tempEstadisticas = iEstadisticas[n];
-					iEstadisticas[n] = iEstadisticas[n + 1];
-					iEstadisticas[n + 1] = tempEstadisticas;
+						strcpy_s(szPalabras[iNumElementos], TAMTOKEN, pDetectada);
+						iEstadisticas[iNumElementos] = 1;
+						iNumElementos++;
+					}
+					iPalabra = 0;
 				}
 			}
 		}
-
+		ordenamiento(szPalabras, iEstadisticas, iNumElementos);
 		fclose(fpDicc);
 	}
-
 }
 
 	/*****************************************************************************************************************
@@ -161,7 +139,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		int& iNumLista)							//Numero de elementos en la szListaFinal
 	{
 		//Sustituya estas lineas por su código
-		strcpy_s(szListaFinal[0],TAMTOKEN, szPalabrasSugeridas[0]); //la palabra candidata
+		strcpy_s(szListaFinal[0], TAMTOKEN, szPalabrasSugeridas[0]); //la palabra candidata
 		iPeso[0] = iEstadisticas[0];			// el peso de la palabra candidata
 
 		iNumLista = 1;							//Una sola palabra candidata
@@ -180,7 +158,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	{
 
 		char abecedario[32] = { 'a', 'b', 'c', 'd','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u', 'v','w','x','y','z', 'á', 'é', 'í', 'ó', 'ú' };
-		int longitud, a, u, w, l, j, q;
+		int longitud, i, j;
 		char ayuda[TAMTOKEN], otraAyuda[TAMTOKEN];
 		int contador;
 		char aux[TAMTOKEN];
@@ -189,92 +167,77 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 
 		longitud = strlen(szPalabraLeida);
 
-
 		strcpy_s(ayuda, TAMTOKEN, szPalabraLeida);
 		strcpy_s(otraAyuda, TAMTOKEN, szPalabraLeida);
 		strcpy_s(aux, TAMTOKEN, szPalabraLeida);
+
+		strcpy_s(candidatas[iSugeridas], TAMTOKEN, szPalabraLeida);
+		iSugeridas++;
 		//Eliminación de caracteres
 		for (contador = 0; contador < longitud; contador++)
 		{
 			int e = 0;
-			for (a = 0; a < longitud; a++)
+			for (i = 0; i < longitud; i++)
 			{
-				if (a != contador)
+				if (i != contador)
 				{
-					szPalabraLeida[e] = ayuda[a];
+					szPalabraLeida[e] = ayuda[i];
 					e++;
 				}
 			}
-			szPalabraLeida[e] = '\0'; // Asegúrate de terminar la cadena correctamente
+			szPalabraLeida[e] = '\0';
 
-			if (DEPURAR == 0)
-			{
-				printf("\n%s", szPalabraLeida);
-			}
-
-			strcpy_s(candidatas[iSugeridas], TAMTOKEN, szPalabraLeida); // Guarda la versión actual de la palabra
+			strcpy_s(candidatas[iSugeridas], TAMTOKEN, szPalabraLeida);
 			iSugeridas++;
 		}
 
-
-		for (u = 0; u < longitud; u += 2)
+		//transposición 
+		for (i = 0; i < longitud; i += 2)
 		{
-			if (u + 1 < longitud)
+			if (i + 1 < longitud)
 			{
-				char noPMT = otraAyuda[u];
-				otraAyuda[u] = otraAyuda[u + 1];
-				otraAyuda[u + 1] = noPMT;
+				char noPMT = otraAyuda[i];
+				otraAyuda[i] = otraAyuda[i + 1];
+				otraAyuda[i + 1] = noPMT;
 			}
-			strcpy_s(candidatas[iSugeridas],TAMTOKEN, otraAyuda);
+			strcpy_s(candidatas[iSugeridas], TAMTOKEN, otraAyuda);
 			iSugeridas++;
-			if (DEPURAR == 0)
-			{
-				printf("\n%s", otraAyuda);
-			}
+
 		}
 
-		for (contador = 0; contador < longitud; contador++)
-		{
-			for (w = 0; w < ABECEDARIO; w++)
-			{
-				szPalabraLeida[contador] = abecedario[w];
-				if (DEPURAR == 0)
-				{
-					printf("\n%s", szPalabraLeida);
-				}
+		for (i = 0; i < longitud; i++)
+		{  // Para cada caracter en 'palabraOriginal'...
+			for (int j = 0; j < 32; j++) {  // ...prueba reemplazándolo con cada caracter en 'abecedario'
+				aux[i] = abecedario[j];
+				strcpy_s(candidatas[iSugeridas], TAMTOKEN, aux);
+				iSugeridas++;
 			}
-
-			strcpy_s(candidatas[iSugeridas],TAMTOKEN, szPalabraLeida);
-			iSugeridas++;
-			strcpy_s(szPalabraLeida, TAMTOKEN, ayuda);
+			aux[i] = szPalabraLeida[i];  // Restaura el caracter original antes de pasar al siguiente
 		}
+
+
 		for (contador = 0; contador <= longitud; contador++)
 		{
-			for (q = 0; q < ABECEDARIO; q++)
+			for (i = 0; i < ABECEDARIO; i++)
 			{
 				// Inserta la letra del abecedario en la posición contador
 				for (j = longitud; j >= contador; j--) {
 					szPalabraLeida[j + 1] = szPalabraLeida[j];
 				}
-				szPalabraLeida[contador] = abecedario[q];
-				if (DEPURAR == 0)
-				{
-					printf("\n%s", szPalabraLeida);
-				}
+				szPalabraLeida[contador] = abecedario[i];
+
 				strcpy_s(candidatas[iSugeridas], TAMTOKEN, szPalabraLeida);
 				iSugeridas++;
 				strcpy_s(szPalabraLeida, TAMTOKEN, ayuda);
 			}
 		}
-	
 
-				iNumSugeridas = iSugeridas;
-				l = 0;
-			while (l < iSugeridas)
-			{
-				strcpy_s(szPalabrasSugeridas[l],TAMTOKEN, candidatas[l]);
-				l++;
-			}
-		
-
+		iNumSugeridas = iSugeridas;
+		i = 0;
+		while (i < iSugeridas)
+		{
+			strcpy_s(szPalabrasSugeridas[i], TAMTOKEN, candidatas[i]);
+			i++;
+		}
 	}
+
